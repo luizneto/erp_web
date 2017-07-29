@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	      xmlns:f="http://java.sun.com/jsf/core"      
+	      xmlns:h="http://java.sun.com/jsf/html"
+	      xmlns:p="http://primefaces.org/ui"
+		  xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+>
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>ERP WEB - Funcionários</title>
+	<h:outputStylesheet libary="text/css" name="css/app.css"/>	
+
+<script type="text/javascript">
+        PrimeFaces.locales['pt_BR'] = {
+            closeText : 'Fechar',
+            prevText : 'Anterior',
+            nextText : 'Próximo',
+            currentText : 'Começo',
+            monthNames : [ 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio',
+                    'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro',
+                    'Novembro', 'Dezembro' ],
+            monthNamesShort : [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' ],
+            dayNames : [ 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta',
+                    'Sexta', 'Sábado' ],
+            dayNamesShort : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb' ],
+            dayNamesMin : [ 'D', 'S', 'T', 'Q', 'Q', 'S', 'S' ],
+            weekHeader : 'Semana',
+            firstDay : 1,
+            isRTL : false,
+            showMonthAfterYear : false,
+            yearSuffix : '',
+            timeOnlyTitle : 'Só Horas',
+            timeText : 'Tempo',
+            hourText : 'Hora',
+            minuteText : 'Minuto',
+            secondText : 'Segundo',
+            currentText : 'Data Atual',
+            ampm : false,
+            month : 'Mês',
+            week : 'Semana',
+            day : 'Dia',
+            allDayText : 'Todo Dia'
+        };
+    </script>
+</h:head>
+
+<h:body>
+	
+	<div id="cabecalho">
+		<ul id="menu-principal">
+			<li>
+				<h:link value="Funcionários" outcome="/funcionarios" />&#160;
+				<h:link value="Usuarios" outcome="/usuarios" />
+			</li>	
+		</ul>
+	</div>
+	
+<!-- <p:outputPanel autoUpdate="true">
+		<h:messages id="mensagens" errorClass="errors" infoClass="notice"/>
+	</p:outputPanel>
+ -->
+ 
+ 	<p:growl autoUpdate="treu" sticky="true" />
+ 	
+	<div id="conteudo">
+	<div id="ajax-loading">
+		<p:ajaxStatus>
+			<f:facet name="start">
+				<h:graphicImage libary="imagens" name="ajax-loader.gif" />
+			</f:facet>
+			<f:facet name="complete" >
+			<h:outputText value="" /> 
+			</f:facet>
+		</p:ajaxStatus>
+		
+	</div>
+		<div id="container">
+		<h:form>
+			<h1>
+				<h:outputText value="Novo Funcionário" rendered="#{empty funcionarioBean.funcionario.id}"/>
+				<h:outputText value="Editar Funcionário" rendered="#{not empty funcionarioBean.funcionario.id}"/>
+			</h1>
+		
+		<h:inputHidden value="#{funcionarioBean.funcionario.id}" />
+
+					
+			<h:outputLabel value="Nome" for="nome" />
+			<h:inputText id="nome" value="#{funcionarioBean.funcionario.nome}" required="true" label="nome" styleClass="texto-longo">
+				<f:validateLength minimum="4" />
+				<f:validateRegex pattern="[a-zA-Z ]+" />
+				<f:ajax event="change"/>
+			</h:inputText>
+
+			<h:outputLabel value="Endereço" for="endereco" />
+			<h:inputTextarea id="endereco" value="#{funcionarioBean.funcionario.endereco}" required="true" label="endereco" rows="3" styleClass="texto-longo"/>
+		
+			<h:outputLabel value="Data De Nascimento" for="data" />		
+			<p:calendar id="data" value="#{funcionarioBean.funcionario.dataDeNascimento}" required="true" label="Data de Nascimento" pattern="dd/mm/yyyy" mask="true" locale="pt_BR"/>
+			
+			<h:outputLabel value="Salário" for="salario" />
+			<p:inputNumber id="salario" value="#{funcionarioBean.funcionario.salario}" required="true" label="Salario" thousandSeparator="." decimalSeparator="," />
+		
+			<h:outputLabel value="Cargo" for="cargo" />
+			<h:selectOneMenu id="cargo" value="#{funcionarioBean.funcionario.cargo}" required="true"  label="Cargo">
+				<f:selectItem itemValue="DBA" itemLabel="DBA" />
+				<f:selectItem itemValue="DESENVOLVEDOR" itemLabel="Desenvolvedor"/>
+				<f:selectItem itemValue="ANALISTA_DE_SISTEMAS" itemLabel="Analista de Sistemas" />
+				<f:selectItem itemValue="GERENTE_DE_PROJETOS" itemLabel="Gerente de Projetos" />
+			</h:selectOneMenu>
+			<div class="acoes-principais">
+				<h:commandButton value="Salvar" action="#{funcionarioBean.salvar}" >
+					<f:ajax render="@form" execute="@form"/>
+				</h:commandButton>
+				<h:commandLink value="Cancelar" action="funcionarios.xhtml" immediate="true" />
+			</div>
+		
+		<p:dataTable value="#{funcionarioDataModel}" var="funcionario" styleClass="dados" paginator="true" rows="10" lazy="true" >
+		<p:column>
+			<f:facet name="header">ID</f:facet>
+				#{funcionario.id}
+		</p:column>
+		<p:column>
+			<f:facet name="header">Nome</f:facet>
+				#{funcionario.nome}
+		</p:column>
+		<p:column>
+			<f:facet name="header">Data de Nascimento</f:facet>
+				#{funcionario.dataDeNascimento}
+		</p:column>
+		<p:column>
+			<f:facet name="header">Endereco</f:facet>
+				#{funcionario.endereco}
+		</p:column>
+		<p:column>
+			<f:facet name="header">Cargo</f:facet>
+				#{funcionario.cargo.descricao}
+		</p:column>
+
+		<p:column>
+			<f:facet name="header">Ações</f:facet>
+			<h:commandLink value="remover" action="#{funcionarioBean.remover(funcionario)}" immediate="true">
+				<f:ajax render="@form" />
+			</h:commandLink>
+
+			&#160;
+			<h:commandLink value="alterar" immediate="true" action="funcionarios.xhtml">
+				<f:setPropertyActionListener value="#{funcionario}" target="#{funcionarioBean.funcionario}"/>
+			</h:commandLink>	
+		</p:column>
+	</p:dataTable>
+	
+		</h:form>
+			
+		</div>
+	</div>	
+
+	<div id="rodape">
+		<div class="rodape-bar">
+			<strong>ERP - WEB 2017</strong>
+		</div>
+	</div>
+
+</h:body>
+</html>
